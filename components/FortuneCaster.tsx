@@ -201,34 +201,72 @@ export default function FortuneCaster() {
   ]
 
   useEffect(() => {
-    checkWalletConnection()
-    setupEventListeners()
+    const initWallet = async () => {
+      try {
+        await checkWalletConnection()
+        setupEventListeners()
+      } catch (error) {
+        console.error('Error initializing wallet:', error)
+      }
+    }
+    
+    initWallet()
     
     return () => {
       if (typeof window !== 'undefined' && (window as any).ethereum) {
-        (window as any).ethereum.removeAllListeners('accountsChanged')
-        (window as any).ethereum.removeAllListeners('chainChanged')
+        try {
+          const ethereum = (window as any).ethereum
+          if (typeof ethereum.removeAllListeners === 'function') {
+            ethereum.removeAllListeners('accountsChanged')
+            ethereum.removeAllListeners('chainChanged')
+          } else if (typeof ethereum.removeListener === 'function') {
+            // Fallback for providers that use removeListener
+            ethereum.removeListener('accountsChanged', () => {})
+            ethereum.removeListener('chainChanged', () => {})
+          }
+        } catch (error) {
+          console.error('Error removing event listeners:', error)
+        }
       }
     }
   }, [])
 
   const setupEventListeners = () => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
-      // Listen for account changes
-      (window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
-        if (accounts.length === 0) {
-          setWalletAddress(null)
-          setNetworkName('')
-        } else {
-          setWalletAddress(accounts[0])
-          checkNetwork()
-        }
-      })
+      try {
+        const ethereum = (window as any).ethereum
+        
+        // Check if the provider supports event listeners
+        if (typeof ethereum.on === 'function') {
+          // Listen for account changes
+          ethereum.on('accountsChanged', (accounts: string[]) => {
+            try {
+              if (accounts && accounts.length === 0) {
+                setWalletAddress(null)
+                setNetworkName('')
+              } else if (accounts && accounts.length > 0) {
+                setWalletAddress(accounts[0])
+                checkNetwork().catch(() => {})
+              }
+            } catch (error) {
+              console.error('Error handling accountsChanged:', error)
+            }
+          })
 
-      // Listen for network changes
-      (window as any).ethereum.on('chainChanged', () => {
-        checkNetwork()
-      })
+          // Listen for network changes
+          ethereum.on('chainChanged', () => {
+            try {
+              checkNetwork().catch(() => {})
+            } catch (error) {
+              console.error('Error handling chainChanged:', error)
+            }
+          })
+        } else {
+          console.log('Ethereum provider does not support event listeners')
+        }
+      } catch (error) {
+        console.error('Error setting up event listeners:', error)
+      }
     }
   }
 
@@ -256,23 +294,25 @@ export default function FortuneCaster() {
 
     try {
       const chainId = await (window as any).ethereum.request({ method: 'eth_chainId' })
-      const chainIdHex = parseInt(chainId, 16)
-      
-      switch (chainIdHex) {
-        case 1:
-          setNetworkName('Ethereum Mainnet')
-          break
-        case 8453:
-          setNetworkName('Base')
-          break
-        case 137:
-          setNetworkName('Polygon')
-          break
-        case 56:
-          setNetworkName('BSC')
-          break
-        default:
-          setNetworkName(`Chain ${chainIdHex}`)
+      if (chainId) {
+        const chainIdHex = parseInt(chainId, 16)
+        
+        switch (chainIdHex) {
+          case 1:
+            setNetworkName('Ethereum Mainnet')
+            break
+          case 8453:
+            setNetworkName('Base')
+            break
+          case 137:
+            setNetworkName('Polygon')
+            break
+          case 56:
+            setNetworkName('BSC')
+            break
+          default:
+            setNetworkName(`Chain ${chainIdHex}`)
+        }
       }
     } catch (error) {
       console.error('Error checking network:', error)
