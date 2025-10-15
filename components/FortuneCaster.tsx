@@ -435,40 +435,58 @@ export default function FortuneCaster() {
   }
 
   const mintNFT = async () => {
+    console.log('🎯 mintNFT function called')
+    console.log('Wallet address:', walletAddress)
+    console.log('Selected stick:', selectedStick)
+    
     if (!walletAddress) {
+      console.log('❌ No wallet connected')
       setWalletError('Please connect your wallet first!')
       return
     }
 
     if (!selectedStick) {
+      console.log('❌ No fortune selected')
       setWalletError('Please draw a fortune first!')
       return
     }
 
+    console.log('✅ Starting minting process...')
     setIsMinting(true)
     setWalletError(null)
 
     try {
+      console.log('🔗 Connecting to Ethereum...')
       const ethereum = (window as any).ethereum
+      
+      if (!ethereum) {
+        throw new Error('MetaMask not found')
+      }
+      
+      console.log('📡 Creating provider...')
       const provider = new ethers.BrowserProvider(ethereum)
+      console.log('✍️ Getting signer...')
       const signer = await provider.getSigner()
+      console.log('📋 Creating contract instance...')
       const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer)
 
-      // Get the current mint price from the contract
+      console.log('💰 Getting mint price...')
       const mintPrice = await contract.mintPrice()
+      console.log('Mint price:', mintPrice.toString())
 
-      console.log('Minting NFT with data:', {
+      console.log('🎲 Minting NFT with data:', {
         fortuneNumber: selectedStick.number,
         title: selectedStick.title,
         fortune: selectedStick.fortune,
-        poem: selectedStick.poem,
-        careerMeaning: selectedStick.meanings.career,
-        relationshipsMeaning: selectedStick.meanings.relationships,
-        healthMeaning: selectedStick.meanings.health,
-        businessMeaning: selectedStick.meanings.business,
-        generalMeaning: selectedStick.meanings.general
+        poem: selectedStick.poem.substring(0, 50) + '...',
+        careerMeaning: selectedStick.meanings.career.substring(0, 50) + '...',
+        relationshipsMeaning: selectedStick.meanings.relationships.substring(0, 50) + '...',
+        healthMeaning: selectedStick.meanings.health.substring(0, 50) + '...',
+        businessMeaning: selectedStick.meanings.business.substring(0, 50) + '...',
+        generalMeaning: selectedStick.meanings.general.substring(0, 50) + '...'
       })
 
+      console.log('🚀 Calling mintFortune function...')
       // Call the mintFortune function
       const tx = await contract.mintFortune(
         selectedStick.number,
@@ -483,30 +501,36 @@ export default function FortuneCaster() {
         { value: mintPrice }
       )
 
-      console.log('Transaction submitted:', tx.hash)
+      console.log('✅ Transaction submitted:', tx.hash)
+      setWalletError(`Transaction submitted! Hash: ${tx.hash}`)
       
+      console.log('⏳ Waiting for confirmation...')
       // Wait for transaction confirmation
       const receipt = await tx.wait()
-      console.log('Transaction confirmed:', receipt)
+      console.log('🎉 Transaction confirmed:', receipt)
       
       setMintSuccess(true)
+      setWalletError(null)
       setTimeout(() => setMintSuccess(false), 10000)
       
     } catch (error: any) {
-      console.error('Error minting NFT:', error)
+      console.error('❌ Error minting NFT:', error)
       
       if (error.code === 4001) {
         setWalletError('Transaction rejected by user')
       } else if (error.code === 'INSUFFICIENT_FUNDS') {
-        setWalletError('Insufficient funds for minting. Need 0.001 ETH + gas fees.')
+        setWalletError('Insufficient funds for minting and gas fees')
       } else if (error.message?.includes('user rejected')) {
         setWalletError('Transaction cancelled by user')
       } else if (error.message?.includes('insufficient funds')) {
         setWalletError('Insufficient funds for minting and gas fees')
+      } else if (error.message?.includes('MetaMask not found')) {
+        setWalletError('MetaMask not found. Please install MetaMask.')
       } else {
         setWalletError(`Failed to mint NFT: ${error.message || 'Unknown error'}`)
       }
     } finally {
+      console.log('🏁 Minting process finished')
       setIsMinting(false)
     }
   }
