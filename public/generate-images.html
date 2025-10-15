@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortune Caster - Image Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fef7f3 0%, #f3e8ff 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+        .image-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            background: #f7fafc;
+        }
+        .image-section h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .fortune-container {
+            width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #FFEAA7 0%, #DDA0DD 100%);
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .fortune-sticks {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 200px;
+        }
+        .stick {
+            width: 20px;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .stick::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: #FF8E53;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .stick-1 { height: 120px; background: #FFE66D; }
+        .stick-2 { height: 140px; background: #F1A7DC; }
+        .stick-3 { height: 160px; background: #FFE66D; }
+        .stick-4 { height: 130px; background: #F1A7DC; }
+        .stick-5 { height: 110px; background: #FFE66D; }
+        
+        .icon-preview {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .mini-sticks {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 40px;
+        }
+        .mini-stick {
+            width: 4px;
+            border-radius: 2px 2px 0 0;
+            position: relative;
+        }
+        .mini-stick::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 3px;
+            background: #FF8E53;
+            border-radius: 50%;
+        }
+        .mini-stick-1 { height: 24px; background: #FFE66D; }
+        .mini-stick-2 { height: 28px; background: #F1A7DC; }
+        .mini-stick-3 { height: 32px; background: #FFE66D; }
+        .mini-stick-4 { height: 26px; background: #F1A7DC; }
+        .mini-stick-5 { height: 22px; background: #FFE66D; }
+        
+        .instructions {
+            background: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .instructions h3 {
+            color: #234e52;
+            margin-top: 0;
+        }
+        .instructions ul {
+            color: #2d3748;
+            line-height: 1.6;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎋 Fortune Caster - Image Generator</h1>
+        
+        <div class="instructions">
+            <h3>📋 Instructions</h3>
+            <ul>
+                <li>Use browser developer tools to capture screenshots of the elements below</li>
+                <li>Right-click on each element and "Save image as..." or use screenshot tools</li>
+                <li>Save with the exact filenames shown in each section</li>
+                <li>Replace the placeholder text files in the /public folder</li>
+            </ul>
+        </div>
+
+        <div class="image-section">
+            <h2>📱 Favicon (32x32) - favicon.ico</h2>
+            <div class="icon-preview">
+                <div class="mini-sticks">
+                    <div class="mini-stick mini-stick-1"></div>
+                    <div class="mini-stick mini-stick-2"></div>
+                    <div class="mini-stick mini-stick-3"></div>
+                    <div class="mini-stick mini-stick-4"></div>
+                    <div class="mini-stick mini-stick-5"></div>
+                </div>
+            </div>
+            <p><strong>Right-click above and save as:</strong> favicon.ico (32x32 pixels)</p>
+        </div>
+
+        <div class="image-section">
+            <h2>🍎 Apple Icon (180x180) - apple-icon.png</h2>
+            <div class="icon-preview" style="width: 180px; height: 180px; margin: 20px auto;">
+                <div class="mini-sticks" style="height: 120px;">
+                    <div class="mini-stick mini-stick-1" style="width: 12px; height: 72px;"></div>
+                    <div class="mini-stick mini-stick-2" style="width: 12px; height: 84px;"></div>
+                    <div class="mini-stick mini-stick-3" style="width: 12px; height: 96px;"></div>
+                    <div class="mini-stick mini-stick-4" style="width: 12px; height: 78px;"></div>
+                    <div class="mini-stick mini-stick-5" style="width: 12px; height: 66px;"></div>
+                </div>
+            </div>
+            <p><strong>Right-click above and save as:</strong> apple-icon.png (180x180 pixels)</p>
+        </div>
+
+        <div class="image-section">
+            <h2>🔗 Open Graph Image (1200x630) - og-image.png</h2>
+            <div class="fortune-container" style="width: 600px; height: 315px; margin: 20px auto;">
+                <div class="fortune-sticks" style="height: 200px;">
+                    <div class="stick stick-1" style="width: 60px; height: 120px;"></div>
+                    <div class="stick stick-2" style="width: 60px; height: 140px;"></div>
+                    <div class="stick stick-3" style="width: 60px; height: 160px;"></div>
+                    <div class="stick stick-4" style="width: 60px; height: 130px;"></div>
+                    <div class="stick stick-5" style="width: 60px; height: 110px;"></div>
+                </div>
+            </div>
+            <p><strong>Right-click above and save as:</strong> og-image.png (1200x630 pixels)</p>
+            <p><em>Note: Resize to 1200x630 for optimal social media sharing</em></p>
+        </div>
+
+        <div class="image-section">
+            <h2>📱 PWA Icons</h2>
+            
+            <h3>192x192 - icon-192.png</h3>
+            <div class="icon-preview" style="width: 192px; height: 192px; margin: 20px auto;">
+                <div class="mini-sticks" style="height: 120px;">
+                    <div class="mini-stick mini-stick-1" style="width: 12px; height: 72px;"></div>
+                    <div class="mini-stick mini-stick-2" style="width: 12px; height: 84px;"></div>
+                    <div class="mini-stick mini-stick-3" style="width: 12px; height: 96px;"></div>
+                    <div class="mini-stick mini-stick-4" style="width: 12px; height: 78px;"></div>
+                    <div class="mini-stick mini-stick-5" style="width: 12px; height: 66px;"></div>
+                </div>
+            </div>
+            
+            <h3>512x512 - icon-512.png</h3>
+            <div class="icon-preview" style="width: 512px; height: 512px; margin: 20px auto;">
+                <div class="mini-sticks" style="height: 320px;">
+                    <div class="mini-stick mini-stick-1" style="width: 32px; height: 192px;"></div>
+                    <div class="mini-stick mini-stick-2" style="width: 32px; height: 224px;"></div>
+                    <div class="mini-stick mini-stick-3" style="width: 32px; height: 256px;"></div>
+                    <div class="mini-stick mini-stick-4" style="width: 32px; height: 208px;"></div>
+                    <div class="mini-stick mini-stick-5" style="width: 32px; height: 176px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>✅ Next Steps</h3>
+            <ul>
+                <li>Generate all the images using the elements above</li>
+                <li>Save them in the <code>/public</code> folder with exact filenames</li>
+                <li>Delete the placeholder text files</li>
+                <li>Test your app - the images should now display properly!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity
+        document.querySelectorAll('.stick, .mini-stick').forEach(stick => {
+            stick.addEventListener('click', () => {
+                stick.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    stick.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>

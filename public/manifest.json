@@ -1,0 +1,21 @@
+{
+  "name": "Fortune Caster",
+  "short_name": "FortuneCaster",
+  "description": "Draw fortune sticks and discover your destiny. Mint your fortune as an NFT on Base.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fef7f3",
+  "theme_color": "#FF6B6B",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

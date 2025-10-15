@@ -1,0 +1,27 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fortune Caster Icon - Simple Fortune Sticks -->
+  <rect width="32" height="32" rx="6" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4ECDC4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Container base -->
+  <rect x="4" y="18" width="24" height="8" rx="2" fill="#A8DADC" stroke="#2C3E50" stroke-width="0.5"/>
+  
+  <!-- Fortune Sticks -->
+  <rect x="6" y="12" width="2.5" height="10" rx="1" fill="#FFE66D" stroke="#2C3E50" stroke-width="0.3"/>
+  <rect x="10" y="10" width="2.5" height="12" rx="1" fill="#F1A7DC" stroke="#2C3E50" stroke-width="0.3"/>
+  <rect x="14" y="8" width="2.5" height="14" rx="1" fill="#FFE66D" stroke="#2C3E50" stroke-width="0.3"/>
+  <rect x="18" y="11" width="2.5" height="11" rx="1" fill="#F1A7DC" stroke="#2C3E50" stroke-width="0.3"/>
+  <rect x="22" y="13" width="2.5" height="9" rx="1" fill="#FFE66D" stroke="#2C3E50" stroke-width="0.3"/>
+  
+  <!-- Orange caps -->
+  <circle cx="7.25" cy="12" r="1.2" fill="#FF8E53"/>
+  <circle cx="11.25" cy="10" r="1.2" fill="#FF8E53"/>
+  <circle cx="15.25" cy="8" r="1.2" fill="#FF8E53"/>
+  <circle cx="19.25" cy="11" r="1.2" fill="#FF8E53"/>
+  <circle cx="23.25" cy="13" r="1.2" fill="#FF8E53"/>
+</svg>
