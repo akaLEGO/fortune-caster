@@ -2,15 +2,15 @@
   "miniapp": {
     "version": "1",
     "name": "Fortune Caster",
-    "iconUrl": "https://fortune-caster-six.vercel.app/icon-192.png",
-    "homeUrl": "https://fortune-caster-six.vercel.app",
-    "splashImageUrl": "https://fortune-caster-six.vercel.app/icon-192.png",
+    "iconUrl": "https://fortunecaster.xyz/icon-192.png",
+    "homeUrl": "https://fortunecaster.xyz",
+    "splashImageUrl": "https://fortunecaster.xyz/icon-192.png",
     "splashBackgroundColor": "#fef7f3",
     "subtitle": "Cast your fortune on-chain",
     "description": "Draw digital fortune sticks inspired by traditional Chinese divination. Get comprehensive guidance for career, relationships, health, business, and life. Mint as NFT on Base.",
     "screenshotUrls": [
-      "https://fortune-caster-six.vercel.app/screenshot1.png",
-      "https://fortune-caster-six.vercel.app/screenshot2.png"
+      "https://fortunecaster.xyz/screenshot1.png",
+      "https://fortunecaster.xyz/screenshot2.png"
     ],
     "primaryCategory": "entertainment",
     "tags": [
@@ -20,11 +20,11 @@
       "base",
       "onchain"
     ],
-    "heroImageUrl": "https://fortune-caster-six.vercel.app/og-image.png",
+    "heroImageUrl": "https://fortunecaster.xyz/og-image.png",
     "tagline": "求籤 · Digital fortune sticks",
     "ogTitle": "Fortune Caster - Cast Your Fortune",
     "ogDescription": "Draw digital fortune sticks and get complete life guidance. Mint your fortune as an NFT on Base.",
-    "ogImageUrl": "https://fortune-caster-six.vercel.app/og-image.png",
+    "ogImageUrl": "https://fortunecaster.xyz/og-image.png",
     "requiredChains": [
       "eip155:8453"
     ],

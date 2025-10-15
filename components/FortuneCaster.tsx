@@ -568,7 +568,7 @@ export default function FortuneCaster() {
     if (!selectedStick) return
     
     const text = `I just drew ${selectedStick.title} on Fortune Caster! 🎋✨\n\n"${selectedStick.poem.split('\n')[0]}..."\n\nCast your fortune too!`
-    const url = 'https://fortune-caster-six.vercel.app'
+    const url = 'https://fortunecaster.xyz'
     
     // Use the Farcaster integration hook
     shareToFarcaster(text, url)
