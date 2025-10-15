@@ -31,7 +31,7 @@ contract FortuneNFT is ERC721, Ownable {
     string private _baseTokenURI;
     
     // Minting price (in wei)
-    uint256 public mintPrice = 0.001 ether; // 0.001 ETH on Base
+    uint256 public mintPrice = 0.00001 ether; // 0.00001 ETH (~$0.02-0.04) on Base
     
     // Maximum supply (optional)
     uint256 public maxSupply = 10000;

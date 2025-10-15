@@ -792,7 +792,7 @@ export default function FortuneCaster() {
                 } text-white px-6 md:px-8 py-2.5 md:py-3 rounded-full text-base md:text-lg font-bold shadow-lg transition-all duration-200 flex items-center gap-2 md:gap-3`}
               >
                 <Image className="w-4 h-4 md:w-5 md:h-5" />
-                {isMinting ? 'Minting...' : 'Mint as NFT (0.001 ETH)'}
+                {isMinting ? 'Minting...' : 'Mint as NFT (~$0.03)'}
               </button>
 
               <button
