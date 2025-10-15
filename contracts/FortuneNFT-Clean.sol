@@ -60,7 +60,7 @@ contract FortuneNFT is ERC721, Ownable {
     ) public payable {
         require(msg.value >= mintPrice, "Insufficient payment");
         require(_tokenIds.current() < maxSupply, "Max supply reached");
-        require(_fortuneNumber >= 1 && _fortuneNumber <= 12, "Invalid fortune number");
+        require(_fortuneNumber >= 1 && _fortuneNumber <= 100, "Invalid fortune number");
         
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();

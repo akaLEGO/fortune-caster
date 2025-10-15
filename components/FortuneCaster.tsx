@@ -145,7 +145,7 @@ export default function FortuneCaster() {
       color: "#95E1D3"
     },
     {
-      number: 8,
+      number: 7,
       title: "上吉 - Great Fortune",
       fortune: "Very Good",
       poem: "Mandarin ducks swim side by side,\nLove's sweet current is your guide.\nHarmony flows without strife,\nJoyful partnership in life.",
