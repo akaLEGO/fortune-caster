@@ -25,6 +25,9 @@ export default function FortuneCaster() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
   const [isMinting, setIsMinting] = useState(false)
   const [mintSuccess, setMintSuccess] = useState(false)
+  const [isConnecting, setIsConnecting] = useState(false)
+  const [walletError, setWalletError] = useState<string | null>(null)
+  const [networkName, setNetworkName] = useState<string>('')
 
   const fortunes: Fortune[] = [
     {
@@ -199,57 +202,166 @@ export default function FortuneCaster() {
 
   useEffect(() => {
     checkWalletConnection()
+    setupEventListeners()
+    
+    return () => {
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        (window as any).ethereum.removeAllListeners('accountsChanged')
+        (window as any).ethereum.removeAllListeners('chainChanged')
+      }
+    }
   }, [])
 
-  const checkWalletConnection = async () => {
-    if (typeof window !== 'undefined' && typeof (window as any).ethereum !== 'undefined') {
-      try {
-        const accounts = await (window as any).ethereum.request({ method: 'eth_accounts' })
-        if (accounts.length > 0) {
+  const setupEventListeners = () => {
+    if (typeof window !== 'undefined' && (window as any).ethereum) {
+      // Listen for account changes
+      (window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
+        if (accounts.length === 0) {
+          setWalletAddress(null)
+          setNetworkName('')
+        } else {
           setWalletAddress(accounts[0])
+          checkNetwork()
         }
-      } catch (error) {
-        console.error('Error checking wallet connection:', error)
+      })
+
+      // Listen for network changes
+      (window as any).ethereum.on('chainChanged', () => {
+        checkNetwork()
+      })
+    }
+  }
+
+  const checkWalletConnection = async () => {
+    if (!isMetaMaskInstalled()) return
+
+    try {
+      const accounts = await (window as any).ethereum.request({ method: 'eth_accounts' })
+      if (accounts.length > 0) {
+        setWalletAddress(accounts[0])
+        await checkNetwork()
       }
+    } catch (error) {
+      console.error('Error checking wallet connection:', error)
+      setWalletError('Failed to check wallet connection')
+    }
+  }
+
+  const isMetaMaskInstalled = () => {
+    return typeof window !== 'undefined' && typeof (window as any).ethereum !== 'undefined'
+  }
+
+  const checkNetwork = async () => {
+    if (!isMetaMaskInstalled()) return
+
+    try {
+      const chainId = await (window as any).ethereum.request({ method: 'eth_chainId' })
+      const chainIdHex = parseInt(chainId, 16)
+      
+      switch (chainIdHex) {
+        case 1:
+          setNetworkName('Ethereum Mainnet')
+          break
+        case 8453:
+          setNetworkName('Base')
+          break
+        case 137:
+          setNetworkName('Polygon')
+          break
+        case 56:
+          setNetworkName('BSC')
+          break
+        default:
+          setNetworkName(`Chain ${chainIdHex}`)
+      }
+    } catch (error) {
+      console.error('Error checking network:', error)
+      setNetworkName('Unknown')
     }
   }
 
   const connectWallet = async () => {
-    if (typeof window !== 'undefined' && typeof (window as any).ethereum !== 'undefined') {
-      try {
-        const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' })
-        setWalletAddress(accounts[0])
-        
+    if (!isMetaMaskInstalled()) {
+      setWalletError('MetaMask is not installed. Please install MetaMask to continue.')
+      return
+    }
+
+    setIsConnecting(true)
+    setWalletError(null)
+
+    try {
+      // Request account access
+      const accounts = await (window as any).ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      })
+      
+      if (accounts.length === 0) {
+        setWalletError('No accounts found. Please create an account in MetaMask.')
+        return
+      }
+
+      setWalletAddress(accounts[0])
+      
+      // Check and switch to Base network
+      await switchToBaseNetwork()
+      
+    } catch (error: any) {
+      console.error('Error connecting wallet:', error)
+      
+      if (error.code === 4001) {
+        setWalletError('Connection rejected. Please approve the connection in MetaMask.')
+      } else if (error.code === -32002) {
+        setWalletError('Connection request already pending. Please check MetaMask.')
+      } else {
+        setWalletError('Failed to connect wallet. Please try again.')
+      }
+    } finally {
+      setIsConnecting(false)
+    }
+  }
+
+  const switchToBaseNetwork = async () => {
+    try {
+      // Try to switch to Base network
+      await (window as any).ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x2105' }], // Base mainnet
+      })
+    } catch (switchError: any) {
+      // If network doesn't exist, add it
+      if (switchError.code === 4902) {
         try {
           await (window as any).ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x2105' }],
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x2105',
+              chainName: 'Base',
+              nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+              },
+              rpcUrls: ['https://mainnet.base.org'],
+              blockExplorerUrls: ['https://basescan.org']
+            }]
           })
-        } catch (switchError: any) {
-          if (switchError.code === 4902) {
-            await (window as any).ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: '0x2105',
-                chainName: 'Base',
-                nativeCurrency: {
-                  name: 'Ethereum',
-                  symbol: 'ETH',
-                  decimals: 18
-                },
-                rpcUrls: ['https://mainnet.base.org'],
-                blockExplorerUrls: ['https://basescan.org']
-              }]
-            })
-          }
+        } catch (addError) {
+          console.error('Error adding Base network:', addError)
+          setWalletError('Failed to add Base network. Please add it manually in MetaMask.')
         }
-      } catch (error) {
-        console.error('Error connecting wallet:', error)
-        alert('Failed to connect wallet. Please try again.')
+      } else if (switchError.code === 4001) {
+        setWalletError('Network switch rejected. Please approve the network switch in MetaMask.')
+      } else {
+        console.error('Error switching network:', switchError)
+        setWalletError('Failed to switch to Base network.')
       }
-    } else {
-      alert('Please install MetaMask or another Web3 wallet to use this feature!')
     }
+  }
+
+  const disconnectWallet = () => {
+    setWalletAddress(null)
+    setNetworkName('')
+    setWalletError(null)
   }
 
   const mintNFT = async () => {
@@ -309,21 +421,73 @@ export default function FortuneCaster() {
       <div className="max-w-6xl mx-auto">
         <div className="absolute top-4 md:top-8 right-4 md:right-8 z-10">
           {!walletAddress ? (
-            <button
-              onClick={connectWallet}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 text-sm md:text-base"
-            >
-              <Wallet className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="hidden sm:inline">Connect Wallet</span>
-              <span className="sm:hidden">Connect</span>
-            </button>
+            <div className="flex flex-col items-end gap-2">
+              {!isMetaMaskInstalled() ? (
+                <div className="text-right">
+                  <a
+                    href="https://metamask.io/download/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 text-sm md:text-base"
+                  >
+                    <Wallet className="w-4 h-4 md:w-5 md:h-5" />
+                    <span className="hidden sm:inline">Install MetaMask</span>
+                    <span className="sm:hidden">Install</span>
+                  </a>
+                  <p className="text-xs text-gray-600 mt-1">MetaMask required</p>
+                </div>
+              ) : (
+                <div className="text-right">
+                  <button
+                    onClick={connectWallet}
+                    disabled={isConnecting}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    <Wallet className={`w-4 h-4 md:w-5 md:h-5 ${isConnecting ? 'animate-spin' : ''}`} />
+                    {isConnecting ? (
+                      <span className="hidden sm:inline">Connecting...</span>
+                    ) : (
+                      <>
+                        <span className="hidden sm:inline">Connect MetaMask</span>
+                        <span className="sm:hidden">Connect</span>
+                      </>
+                    )}
+                  </button>
+                  <p className="text-xs text-gray-600 mt-1">Connect your wallet</p>
+                </div>
+              )}
+              
+              {walletError && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded-lg text-xs max-w-xs">
+                  <div className="flex items-center gap-1">
+                    <span className="font-semibold">Error:</span>
+                    <span>{walletError}</span>
+                  </div>
+                  <button
+                    onClick={() => setWalletError(null)}
+                    className="text-red-500 hover:text-red-700 ml-auto mt-1"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
-            <div className="bg-white rounded-full px-4 md:px-6 py-2 md:py-3 shadow-lg border-2 border-purple-200">
+            <div className="bg-white rounded-full px-4 md:px-6 py-2 md:py-3 shadow-lg border-2 border-green-200">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="font-semibold text-gray-700 text-xs md:text-base">{formatAddress(walletAddress)}</span>
               </div>
-              <div className="text-xs text-gray-500 text-center mt-1">Base Network</div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-xs text-gray-500">{networkName || 'Connected'}</span>
+                <button
+                  onClick={disconnectWallet}
+                  className="text-xs text-red-500 hover:text-red-700 ml-2"
+                  title="Disconnect wallet"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           )}
         </div>
