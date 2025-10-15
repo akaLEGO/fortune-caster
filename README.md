@@ -181,11 +181,11 @@ Built with modern web technologies and Web3 integration.
 
 ## 🚀 Deployment
 
-Ready to deploy? Follow the complete guide:
+Ready to deploy? Follow the complete guides:
 
-- **[📋 Full Deployment Guide](README-DEPLOYMENT.md)** - Step-by-step instructions
+- **[📋 Farcaster Mini App Publishing](FARCASTER-PUBLISHING-STEPS.md)** - Official publishing guide
+- **[🎯 Full Deployment Guide](README-DEPLOYMENT.md)** - Vercel and GitHub setup
 - **[⚡ Quick Commands](DEPLOY.md)** - Copy-paste deployment commands
-- **[🖼️ Image Assets](public/README-images.md)** - Generate required images
 
 ### Quick Start:
 ```bash
@@ -197,7 +197,21 @@ git remote add origin https://github.com/YOUR_USERNAME/fortune-caster.git
 git push -u origin main
 ```
 
-Then deploy to [Vercel](https://vercel.com) and add your domain!
+Then:
+1. Deploy to [Vercel](https://vercel.com)
+2. Add your domain
+3. Publish to Farcaster Mini Apps (see [FARCASTER-PUBLISHING-STEPS.md](FARCASTER-PUBLISHING-STEPS.md))
+
+## 🎯 Farcaster Mini App
+
+This app is ready to be published as a Farcaster Mini App! Key features:
+
+- ✅ **Manifest File**: Located at `/.well-known/farcaster.json`
+- ✅ **Base Network**: NFT minting on Base (Chain ID: 8453)
+- ✅ **Mobile Optimized**: Perfect in-app experience
+- ✅ **Developer Rewards**: Earn rewards from onchain NFT transactions
+
+**Publishing Guide**: See [FARCASTER-PUBLISHING-STEPS.md](FARCASTER-PUBLISHING-STEPS.md) for complete instructions based on [official Farcaster documentation](https://miniapps.farcaster.xyz/docs/guides/publishing).
 
 ---
 

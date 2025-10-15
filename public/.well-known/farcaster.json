@@ -1,0 +1,35 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Fortune Caster",
+    "iconUrl": "https://fortunecaster.xyz/icon-192.png",
+    "homeUrl": "https://fortunecaster.xyz",
+    "splashImageUrl": "https://fortunecaster.xyz/icon-192.png",
+    "splashBackgroundColor": "#fef7f3",
+    "subtitle": "Cast your fortune on-chain",
+    "description": "Draw digital fortune sticks inspired by traditional Chinese divination. Get comprehensive guidance for career, relationships, health, business, and life. Mint as NFT on Base.",
+    "screenshotUrls": [
+      "https://fortunecaster.xyz/screenshot1.png",
+      "https://fortunecaster.xyz/screenshot2.png"
+    ],
+    "primaryCategory": "entertainment",
+    "tags": [
+      "fortune",
+      "divination",
+      "nft",
+      "base",
+      "onchain"
+    ],
+    "heroImageUrl": "https://fortunecaster.xyz/og-image.png",
+    "tagline": "求籤 · Digital fortune sticks",
+    "ogTitle": "Fortune Caster - Cast Your Fortune",
+    "ogDescription": "Draw digital fortune sticks and get complete life guidance. Mint your fortune as an NFT on Base.",
+    "ogImageUrl": "https://fortunecaster.xyz/og-image.png",
+    "requiredChains": [
+      "eip155:8453"
+    ],
+    "requiredCapabilities": [
+      "wallet.getEthereumProvider"
+    ]
+  }
+}
