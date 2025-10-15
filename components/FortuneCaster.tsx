@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { Sparkles, RefreshCw, Wallet, Image, Share2, Briefcase, Heart, Activity, TrendingUp, Compass } from 'lucide-react'
 import { ethers } from 'ethers'
+import FarcasterIntegration, { useFarcaster } from './FarcasterIntegration'
 
 interface Fortune {
   number: number
@@ -83,6 +84,9 @@ export default function FortuneCaster() {
   const [isConnecting, setIsConnecting] = useState(false)
   const [walletError, setWalletError] = useState<string | null>(null)
   const [networkName, setNetworkName] = useState<string>('')
+  
+  // Farcaster integration
+  const { isInFarcaster, user, shareToFarcaster } = useFarcaster()
 
   const fortunes: Fortune[] = [
     {
@@ -566,9 +570,8 @@ export default function FortuneCaster() {
     const text = `I just drew ${selectedStick.title} on Fortune Caster! 🎋✨\n\n"${selectedStick.poem.split('\n')[0]}..."\n\nCast your fortune too!`
     const url = 'https://fortunecaster.xyz'
     
-    const farcasterUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}&embeds[]=${encodeURIComponent(url)}`
-    
-    window.open(farcasterUrl, '_blank')
+    // Use the Farcaster integration hook
+    shareToFarcaster(text, url)
   }
 
   const handleShake = () => {
@@ -595,6 +598,8 @@ export default function FortuneCaster() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-pink-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
+        {/* Farcaster Integration Banner */}
+        <FarcasterIntegration />
         <div className="absolute top-4 md:top-8 right-4 md:right-8 z-10">
           {!walletAddress ? (
             <div className="flex flex-col items-end gap-2">
