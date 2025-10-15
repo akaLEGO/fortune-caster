@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Sparkles, RefreshCw, Wallet, Image, Share2, Briefcase, Heart, Activity, TrendingUp, Compass } from 'lucide-react'
+import { ethers } from 'ethers'
 
 interface Fortune {
   number: number
@@ -17,6 +18,35 @@ interface Fortune {
   }
   color: string
 }
+
+// Contract configuration
+const CONTRACT_ADDRESS = "0xBA37780a9C4810aDC99E310ee05F4f1FBf0f5f39"
+const CONTRACT_ABI = [
+  {
+    "inputs": [
+      {"internalType": "uint256", "name": "_fortuneNumber", "type": "uint256"},
+      {"internalType": "string", "name": "_title", "type": "string"},
+      {"internalType": "string", "name": "_fortune", "type": "string"},
+      {"internalType": "string", "name": "_poem", "type": "string"},
+      {"internalType": "string", "name": "_careerMeaning", "type": "string"},
+      {"internalType": "string", "name": "_relationshipsMeaning", "type": "string"},
+      {"internalType": "string", "name": "_healthMeaning", "type": "string"},
+      {"internalType": "string", "name": "_businessMeaning", "type": "string"},
+      {"internalType": "string", "name": "_generalMeaning", "type": "string"}
+    ],
+    "name": "mintFortune",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "mintPrice",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
 
 export default function FortuneCaster() {
   const [isShaking, setIsShaking] = useState(false)
@@ -406,19 +436,76 @@ export default function FortuneCaster() {
 
   const mintNFT = async () => {
     if (!walletAddress) {
-      alert('Please connect your wallet first!')
+      setWalletError('Please connect your wallet first!')
+      return
+    }
+
+    if (!selectedStick) {
+      setWalletError('Please draw a fortune first!')
       return
     }
 
     setIsMinting(true)
-    
+    setWalletError(null)
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const ethereum = (window as any).ethereum
+      const provider = new ethers.BrowserProvider(ethereum)
+      const signer = await provider.getSigner()
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer)
+
+      // Get the current mint price from the contract
+      const mintPrice = await contract.mintPrice()
+
+      console.log('Minting NFT with data:', {
+        fortuneNumber: selectedStick.number,
+        title: selectedStick.title,
+        fortune: selectedStick.fortune,
+        poem: selectedStick.poem,
+        careerMeaning: selectedStick.meanings.career,
+        relationshipsMeaning: selectedStick.meanings.relationships,
+        healthMeaning: selectedStick.meanings.health,
+        businessMeaning: selectedStick.meanings.business,
+        generalMeaning: selectedStick.meanings.general
+      })
+
+      // Call the mintFortune function
+      const tx = await contract.mintFortune(
+        selectedStick.number,
+        selectedStick.title,
+        selectedStick.fortune,
+        selectedStick.poem,
+        selectedStick.meanings.career,
+        selectedStick.meanings.relationships,
+        selectedStick.meanings.health,
+        selectedStick.meanings.business,
+        selectedStick.meanings.general,
+        { value: mintPrice }
+      )
+
+      console.log('Transaction submitted:', tx.hash)
+      
+      // Wait for transaction confirmation
+      const receipt = await tx.wait()
+      console.log('Transaction confirmed:', receipt)
+      
       setMintSuccess(true)
-      setTimeout(() => setMintSuccess(false), 5000)
-    } catch (error) {
+      setTimeout(() => setMintSuccess(false), 10000)
+      
+    } catch (error: any) {
       console.error('Error minting NFT:', error)
-      alert('Failed to mint NFT. Please try again.')
+      
+      if (error.code === 4001) {
+        setWalletError('Transaction rejected by user')
+      } else if (error.code === 'INSUFFICIENT_FUNDS') {
+        setWalletError('Insufficient funds for minting. Need 0.001 ETH + gas fees.')
+      } else if (error.message?.includes('user rejected')) {
+        setWalletError('Transaction cancelled by user')
+      } else if (error.message?.includes('insufficient funds')) {
+        setWalletError('Insufficient funds for minting and gas fees')
+      } else {
+        setWalletError(`Failed to mint NFT: ${error.message || 'Unknown error'}`)
+      }
     } finally {
       setIsMinting(false)
     }
@@ -705,7 +792,7 @@ export default function FortuneCaster() {
                 } text-white px-6 md:px-8 py-2.5 md:py-3 rounded-full text-base md:text-lg font-bold shadow-lg transition-all duration-200 flex items-center gap-2 md:gap-3`}
               >
                 <Image className="w-4 h-4 md:w-5 md:h-5" />
-                {isMinting ? 'Minting...' : 'Mint Your Fortune'}
+                {isMinting ? 'Minting...' : 'Mint as NFT (0.001 ETH)'}
               </button>
 
               <button
