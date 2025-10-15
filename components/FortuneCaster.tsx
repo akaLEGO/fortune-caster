@@ -20,7 +20,7 @@ interface Fortune {
 }
 
 // Contract configuration
-const CONTRACT_ADDRESS = "0xBA37780a9C4810aDC99E310ee05F4f1FBf0f5f39"
+const CONTRACT_ADDRESS = "0x43e6713BE6c9E17f021ee503F93cd2023ef85Bc3"
 const CONTRACT_ABI = [
   {
     "inputs": [
@@ -43,6 +43,31 @@ const CONTRACT_ABI = [
     "inputs": [],
     "name": "mintPrice",
     "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "name": "getFortuneData",
+    "outputs": [
+      {
+        "components": [
+          {"internalType": "uint256", "name": "fortuneNumber", "type": "uint256"},
+          {"internalType": "string", "name": "title", "type": "string"},
+          {"internalType": "string", "name": "fortune", "type": "string"},
+          {"internalType": "string", "name": "poem", "type": "string"},
+          {"internalType": "string", "name": "careerMeaning", "type": "string"},
+          {"internalType": "string", "name": "relationshipsMeaning", "type": "string"},
+          {"internalType": "string", "name": "healthMeaning", "type": "string"},
+          {"internalType": "string", "name": "businessMeaning", "type": "string"},
+          {"internalType": "string", "name": "generalMeaning", "type": "string"},
+          {"internalType": "uint256", "name": "timestamp", "type": "uint256"}
+        ],
+        "internalType": "struct FortuneNFT.FortuneData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   }
@@ -145,7 +170,7 @@ export default function FortuneCaster() {
       color: "#95E1D3"
     },
     {
-      number: 7,
+      number: 8,
       title: "上吉 - Great Fortune",
       fortune: "Very Good",
       poem: "Mandarin ducks swim side by side,\nLove's sweet current is your guide.\nHarmony flows without strife,\nJoyful partnership in life.",
