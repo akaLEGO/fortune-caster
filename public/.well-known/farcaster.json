@@ -12,7 +12,7 @@
     "splashImageUrl": "https://fortune-caster-six.vercel.app/icon-192.png",
     "splashBackgroundColor": "#fef7f3",
     "subtitle": "Cast your fortune on-chain",
-    "description": "Draw digital fortune sticks and get life guidance. Mint as NFT on Base.",
+    "description": "Draw fortune sticks and get guidance. Mint as NFT on Base.",
     "screenshotUrls": [
       "https://fortune-caster-six.vercel.app/screenshot1.png",
       "https://fortune-caster-six.vercel.app/screenshot2.png"
@@ -27,7 +27,7 @@
     ],
     "heroImageUrl": "https://fortune-caster-six.vercel.app/og-image.png",
     "tagline": "求籤 · Digital fortune sticks",
-    "ogTitle": "Fortune Caster",
+    "ogTitle": "Fortune Caster App",
     "ogDescription": "Draw digital fortune sticks and get complete life guidance. Mint your fortune as an NFT on Base.",
     "ogImageUrl": "https://fortune-caster-six.vercel.app/og-image.png",
     "requiredChains": [
