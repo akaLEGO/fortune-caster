@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Fortune Caster - Cast Your Fortune',
     description: 'Draw digital fortune sticks and get complete life guidance. Mint as NFT on Base.',
-    url: 'https://fortunecaster.xyz',
+    url: 'https://fortune-caster-six.vercel.app',
     siteName: 'Fortune Caster',
     images: [
       {
