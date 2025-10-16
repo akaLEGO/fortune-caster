@@ -1,4 +1,9 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjgzMTcsInR5cGUiOiJhdXRoIiwia2V5IjoiMHhEYUJBMTMzMEI2NDY5OTJFYTY3NjUzODJjOEYxMkM2ZjgxYTAxMTAwIn0",
+    "payload": "eyJkb21haW4iOiJmb3J0dW5lLWNhc3Rlci1zaXgudmVyY2VsLmFwcCJ9",
+    "signature": "SZuQ+3NPYFJwTa9WasR1RnJ1a4XxsPaFA6taKN82zMh/098Rlx2117JQHLfaJtFfYjIeZgvLptppd6AmuChb/Bs="
+  },
   "miniapp": {
     "version": "1",
     "name": "Fortune Caster",
