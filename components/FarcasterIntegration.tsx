@@ -16,32 +16,44 @@ export default function FarcasterIntegration() {
   const [isInFarcaster, setIsInFarcaster] = useState(false)
 
   useEffect(() => {
-    // Check if running in Farcaster/Warpcast
-    const checkFarcaster = () => {
-      // Check for Farcaster-specific user agent or environment
-      const userAgent = navigator.userAgent.toLowerCase()
-      const isWarpcast = userAgent.includes('warpcast') || userAgent.includes('farcaster')
-      
-      // Check for Farcaster frame context
-      const isFrame = window.parent !== window
-      
-      setIsInFarcaster(isWarpcast || isFrame)
-      
-      // Try to get user data from Farcaster
-      if (isWarpcast || isFrame) {
-        try {
-          // This would be populated by Farcaster when running as a frame/mini app
-          const farcasterUser = (window as any).farcasterUser
-          if (farcasterUser) {
-            setUser(farcasterUser)
+    // Check if running in Farcaster/Warpcast and initialize SDK
+    const initializeFarcaster = async () => {
+      try {
+        // Check for Farcaster-specific user agent or environment
+        const userAgent = navigator.userAgent.toLowerCase()
+        const isWarpcast = userAgent.includes('warpcast') || userAgent.includes('farcaster')
+        
+        // Check for Farcaster frame context
+        const isFrame = window.parent !== window
+        
+        const isInFarcasterApp = isWarpcast || isFrame
+        
+        if (isInFarcasterApp) {
+          setIsInFarcaster(true)
+          
+          // Dynamically import Farcaster SDK
+          const { sdk } = await import('@farcaster/miniapp-sdk')
+          
+          // Call ready() to dismiss splash screen
+          await sdk.actions.ready()
+          
+          console.log('✅ Farcaster SDK initialized and ready() called')
+          
+          // Try to get user data
+          try {
+            const userData = await sdk.actions.signIn()
+            setUser(userData)
+            console.log('✅ Farcaster user data:', userData)
+          } catch (error) {
+            console.log('Farcaster sign-in not available:', error)
           }
-        } catch (error) {
-          console.log('Farcaster user data not available')
         }
+      } catch (error) {
+        console.log('Farcaster SDK not available or error:', error)
       }
     }
 
-    checkFarcaster()
+    initializeFarcaster()
 
     // Listen for Farcaster events
     const handleFarcasterMessage = (event: MessageEvent) => {
@@ -92,39 +104,57 @@ export default function FarcasterIntegration() {
 export function useFarcaster() {
   const [isInFarcaster, setIsInFarcaster] = useState(false)
   const [user, setUser] = useState<FarcasterUser | null>(null)
+  const [sdk, setSdk] = useState<any>(null)
 
   useEffect(() => {
-    const userAgent = navigator.userAgent.toLowerCase()
-    const isWarpcast = userAgent.includes('warpcast') || userAgent.includes('farcaster')
-    const isFrame = window.parent !== window
-    
-    setIsInFarcaster(isWarpcast || isFrame)
-
-    if (isWarpcast || isFrame) {
+    const initializeFarcaster = async () => {
       try {
-        const farcasterUser = (window as any).farcasterUser
-        if (farcasterUser) {
-          setUser(farcasterUser)
+        const userAgent = navigator.userAgent.toLowerCase()
+        const isWarpcast = userAgent.includes('warpcast') || userAgent.includes('farcaster')
+        const isFrame = window.parent !== window
+        
+        const isInFarcasterApp = isWarpcast || isFrame
+        setIsInFarcaster(isInFarcasterApp)
+
+        if (isInFarcasterApp) {
+          // Dynamically import Farcaster SDK
+          const { sdk: farcasterSdk } = await import('@farcaster/miniapp-sdk')
+          setSdk(farcasterSdk)
+          
+          // Call ready() to dismiss splash screen
+          await farcasterSdk.actions.ready()
+          console.log('✅ Farcaster SDK ready() called')
+          
+          // Try to get user data
+          try {
+            const userData = await farcasterSdk.actions.signIn()
+            setUser(userData)
+          } catch (error) {
+            console.log('Farcaster sign-in not available:', error)
+          }
         }
       } catch (error) {
-        console.log('Farcaster user data not available')
+        console.log('Farcaster SDK not available:', error)
       }
     }
+
+    initializeFarcaster()
   }, [])
 
-  const shareToFarcaster = (text: string, url?: string) => {
-    if (isInFarcaster) {
-      // Use Farcaster's native sharing
-      const shareData = {
-        text: text,
-        url: url || window.location.href
+  const shareToFarcaster = async (text: string, url?: string) => {
+    if (isInFarcaster && sdk) {
+      try {
+        // Use Farcaster SDK native sharing
+        await sdk.actions.share({
+          text: text,
+          url: url || window.location.href
+        })
+      } catch (error) {
+        console.log('Farcaster native sharing failed, using fallback:', error)
+        // Fallback to external Farcaster link
+        const farcasterUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}${url ? `&embeds[]=${encodeURIComponent(url)}` : ''}`
+        window.open(farcasterUrl, '_blank')
       }
-      
-      // Post message to parent frame (Farcaster)
-      window.parent.postMessage({
-        type: 'farcaster:share',
-        data: shareData
-      }, '*')
     } else {
       // Fallback to external Farcaster link
       const farcasterUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}${url ? `&embeds[]=${encodeURIComponent(url)}` : ''}`
@@ -135,6 +165,7 @@ export function useFarcaster() {
   return {
     isInFarcaster,
     user,
+    sdk,
     shareToFarcaster
   }
 }

@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@farcaster/miniapp-sdk": "^0.2.0",
     "ethers": "^6.15.0",
     "lucide-react": "^0.263.1",
     "next": "^14.2.5",
